@@ -1,0 +1,26 @@
+Issue1:
+Multiple sources found for csv (org.apache.spark.sql.execution.datasources.csv.CSVFileFormat,com.databricks.spark.csv.DefaultSource15)
+
+Resolution:
+-----------
+use  csv format as below for this issue
+val orderscsv=spark.read.format("org.apache.spark.sql.execution.datasources.csv.CSVFileFormat")
+                  .option("header", "false")
+                  .option("inferSchema", "true")
+                  .load("c:/Users/rv00451128/IdeaProjects/MyFirst/orders_csv - Copy.csv")
+                  .toDF("order_id","order_date","order_customer_id","order_status")
+ Issue2:
+ --------------
+ Error:(53, 25) Unable to find encoder for type stored in a Dataset.  Primitive types (Int, String, etc) and
+    Product types (case classes) are supported by importing spark.implicits._  Support for serializing other types will be added in
+    future releases
+ Resolution:
+ ---------------
+ //Declare case class outside the object scope. Declare case class outside main.
+
+   // case class Order(order_id: Int,order_date:String,order_customer_id:Int,order_status:String)
+     val orderds=spark.read.textFile("c:/Users/rv00451128/IdeaProjects/MyFirst/orders.txt")
+      .map(o=>{
+        val a=o.split(",")
+        Order(a(0).toInt,a(1),a(2).toInt,a(3))
+      }).as[Order]
