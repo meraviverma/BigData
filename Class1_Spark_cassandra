@@ -31,7 +31,7 @@ import org.apache.spark.sql.cassandra._
 
   employee1.write
   .format("org.apache.spark.sql.cassandra")
-  .mode("overwrite")
+  .mode(SaveMode.Append)
   .options(Map( "table" -> "employee_new", "keyspace" -> "test_keyspace"))
   .save()
   
