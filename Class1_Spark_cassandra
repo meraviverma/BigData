@@ -35,6 +35,36 @@ import org.apache.spark.sql.cassandra._
   .options(Map( "table" -> "employee_new", "keyspace" -> "test_keyspace"))
   .save()
   
+  NOTE: Different mode for spark cassandra:
+  
+If the cassandra table that spark targets exists then
+
+Link for reference:
+https://gist.github.com/kyrsideris/78c8c0ca73a72a92f009dcb540f0e1df
+
+SaveMode.Append will update it
+SaveMode.Overwrite will truncate and insert (but it requires option "confirm.truncate" -> "true")
+SaveMode.Ignore will not perform any action on existing table
+SaveMode.ErrorIfExists (default) will throw the following 
+exception: https://github.com/datastax/spark-cassandra-connector/blob/v2.0.6/spark-cassandra-connector/src/main/scala/org/apache/spark/sql/cassandra/DefaultSource.scala#L93-L96
+ 
+ Append: It will update the data and insert new record if any.
+ Overwrite: It will truncate the table and load the data which we have passed.Fresh load.
+ Ignore : It will not performa any operation.
+ ErrorIfExists : Give error if the table already contains data.
+ 
+ Overwirte example
+ ---------------------
+ For overwrite we need to use "confirm.truncate" when saving.
+Exapmle:
+ase class Person(name: String, surname: String, children: Int)
+val newNames = spark.sparkContext.parallelize(Seq(Person("Eleni", "Garcia", 1), Person("Galina", "Xin", 2), Person("Carlo", "Tran", 1)))
+.toDS
+newNames.write.format("org.apache.spark.sql.cassandra")
+.options(Map("table" -> "people", "keyspace" -> "test_savemodes", "confirm.truncate" -> "true")).
+mode(org.apache.spark.sql.SaveMode.Overwrite).save
+
+  
   applyNullCheck(finalResultSet).write
   .format("org.apache.spark.sql.cassandra")
   .mode("overwrite")
