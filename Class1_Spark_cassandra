@@ -23,6 +23,12 @@ val tableToLoad=sqlContext
   
   Write to Cassandra
   -------------------------
+  //Create a sample dataframe that is going to be written in Cassandra table
+import org.apache.spark.sql.functions._
+val employee1 = spark.range(0, 3).select($"id".as("id"), (rand() * 3).cast("int").as("dep_id"), (rand() * 40 + 20).cast("int").as("age"))
+
+import org.apache.spark.sql.cassandra._
+
   employee1.write
   .format("org.apache.spark.sql.cassandra")
   .mode("overwrite")
