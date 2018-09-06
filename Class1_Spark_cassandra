@@ -1,0 +1,39 @@
+Read Cassandra
+------------------------
+Read from a cassandra table:
+
+val tableToLoad=sqlContext
+        .read
+        .format("org.apache.spark.sql.cassandra")
+        .options(Map("table"->"words_new","Keyspace"->"test_keyspace","inferSchema"->"true","cluster"-> "Test Cluster"))
+        .load()
+ 
+ inferSchema and cluster are optional
+ 
+ You can ceate TempTable from the table loaded.
+ 
+ val unit=tableToLoad.registerTempTable(tableName)
+ 
+ Dataframe Read table Using Helper Function
+ 
+ val df2 = spark
+  .read
+  .cassandraFormat("words_new", "test_keyspace", "Test Cluster")
+  .load()
+  
+  Write to Cassandra
+  -------------------------
+  employee1.write
+  .format("org.apache.spark.sql.cassandra")
+  .mode("overwrite")
+  .options(Map( "table" -> "employee_new", "keyspace" -> "test_keyspace"))
+  .save()
+  
+  applyNullCheck(finalResultSet).write
+  .format("org.apache.spark.sql.cassandra")
+  .mode("overwrite")
+  .options(Map( "table" -> "employee_new", "keyspace" -> "test_keyspace"))
+  .save()
+  Note: We can also apply some function to check if null is there and discard those records. We have created a applyNullCheck function
+  to check for null.
+  
