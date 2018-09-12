@@ -1,0 +1,9 @@
+DataFrames are actually Datasets.
+
+type DataFrame=Dataset[Row]
+
+-> Datasets can be thought of as typed distributed collection of data.
+->Dataset API unifies the dataframe and RDD APIs . Mix and Match!
+->Dataset require structured/semi-structured data.Schemas and Encoders core part of Datasets.
+
+Dataset can be thought as a comprise between RDDS and Dataframe.
