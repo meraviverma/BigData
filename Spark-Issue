@@ -24,3 +24,25 @@ val orderscsv=spark.read.format("org.apache.spark.sql.execution.datasources.csv.
         val a=o.split(",")
         Order(a(0).toInt,a(1),a(2).toInt,a(3))
       }).as[Order]
+
+Issue3:
+--------------------
+Seeting up win utils file in Intellije and solving error winutils error:
+java.io.IOException: Could not locate executable D:\software\winutils-master\hadoop-2.8.1\bin\winutils.exe in the Hadoop binaries
+
+Download winutilsfile and keep in folder . Example D:/software/hadoop/bin
+and set property in your code.
+ System.setProperty("hadoop.home.dir", "D:\\software\\winutils-master\\hadoop")
+ 
+ def main(arg: Array[String]){
+    System.setProperty("hadoop.home.dir", "D:\\software\\winutils-master\\hadoop")
+    val spark=SparkSession
+      .builder()
+      .appName("Class11")
+      //.config("spark.some.config.option", "some-value")
+      .master("local")
+      .getOrCreate()
+      }
+    And you are ready to go
+    
+    
