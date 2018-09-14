@@ -1,8 +1,18 @@
+http://sparkdatasourceapi.blogspot.com/2016/10/patitioning-in-spark-writing-custom.html
 Partitioning in Spark:
 ----------------------------
 Spark’s partitioning is available on all RDDs of key/value pairs, and causes the system
 to group elements based on a function of each key.It lets the program ensure that a set of
 keys will appear together on some node.
+
+By default, spark creates the number of partitions equivalent to the number of cores in the cluster. 
+
+Properties of Partitions
+------------------------------
+1)Partitions never span over multiple machines, i.e., all tuples in the same partition are guaranteed to be on the same machine.
+2)Each machine in the cluster can contain one or more partitions.
+3)The total number of partitions are configurable. By default, it equals the total number of cores on all executor nodes.
+
 
 hashpartition an RDD into 100 partitions so that keys that have the same hash value modulo 100 appear on the same node. 
 Or you might range-partition the RDD into sorted ranges of keys so that elements with keys in the same range appear on the same node.
@@ -14,6 +24,33 @@ There are two types of partitioner:
 
 HashPartitioner:
 -------------------------------
+There are two ways to create RDDs with specific partitionings:
+Providing explicit partitioner by calling the partitionBy method on an RDD. (see below example of HashPartitioning)
+By applying transformations that return RDDs with specific partitioners. Operations on RDDs that hold to (and propagate) a partitioner 
+are:
+join
+leftOuterJoin
+rightOuterJoin
+groupByKey
+reduceByKey
+cogroup
+foldByKey
+combineByKey
+mapValues (if parent has a partitioner)
+flatMapValues (if parent has a partitioner)
+filter (if parent has a partitioner)
+sort
+partitionBy
+groupWith
+On the other hand, operations like map() cause the new RDD to forget the parent's partitioning information because such operations 
+can theoretically modify the key of the each record. So in such case, if the operation preserved the partitioner in the result RDD, 
+it no longer makes any sense, as now keys are all different. So spark provides operations like mapValues and flatMapValues, if we don't
+want to change the keys, then we can use these operations, thereby preserving the partitioner.
+
+Important: The result of partitionBy should be persisted. Otherwise, it will cause subsequent uses of the RDD to repeat the
+partitioning of data and use of this partitioned RDD will cause the reevaluation of RDD's complete lineage that would result in the 
+repeated partitioning and shuffling of the data across the network.
+
 HashPartitioner works on Java’s Object.hashcode(). The concept of hashcode() is that objects which are equal should 
 have the same hashcode. So based on this hashcode() concept HashPartitioner will divide the keys that have the same hashcode().
 It is the default partitioner of Spark.
@@ -31,7 +68,23 @@ The ranges are determined by sampling the content of the RDD passed in.
 First, the RangePartitioner will sort the records based on the key and then it will divide the records into a number of partitions 
 based on the given value.
 
+Data is partitioned according to an order of keys or a set of sorted ranges of keys. 
+So tuples with the same range appear on the same machine.
+
+It is recommended to persist the data
+
+Custom Partitioners
+-----------------------------
+
+To implement a custom partitioner, we need to extend the Partitioner class and implement the three methods which are:
+numPartitions : Int : returns the number of partitions 
+getPartitions(key : Any) : Int :  returns the partition ID (0 to numPartitions-1) for the given key
+equals() : This is the standard Java equality method. Spark will need to test our partitioner object against other instances of itself when it decides whether two of our RDDs are partitioned the same way!!
+Below is the simple custom partitioner example:
+
+
 Example:
  val counts_range = textfile.flatMap(line => line.split(" ")).map(word => (word, 1))
  val range=counts_range.partitionBy(new RangePartitioner(10,counts_range))
  counts_range.reduceByKey(_+_).saveAsTextFile("C:\\Users\\rv00451128\\Desktop\\tutorial\\data\\range_ex")  
+
