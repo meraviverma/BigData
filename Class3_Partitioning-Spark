@@ -1,0 +1,37 @@
+Partitioning in Spark:
+----------------------------
+Spark’s partitioning is available on all RDDs of key/value pairs, and causes the system
+to group elements based on a function of each key.It lets the program ensure that a set of
+keys will appear together on some node.
+
+hashpartition an RDD into 100 partitions so that keys that have the same hash value modulo 100 appear on the same node. 
+Or you might range-partition the RDD into sorted ranges of keys so that elements with keys in the same range appear on the same node.
+
+There are two types of partitioner:
+1)HashPartitioner
+2)RangePartitioner
+3)We can create a custome partitioner .
+
+HashPartitioner:
+-------------------------------
+HashPartitioner works on Java’s Object.hashcode(). The concept of hashcode() is that objects which are equal should 
+have the same hashcode. So based on this hashcode() concept HashPartitioner will divide the keys that have the same hashcode().
+It is the default partitioner of Spark.
+
+Example:
+val textfile=spark.sparkContext.textFile("C:\\Users\\rv00451128\\IdeaProjects\\MyFirst\\Employee.txt")
+val counts = textfile.flatMap(line => line.split(" ")).map(word => (word, 1)).partitionBy(new HashPartitioner(10))
+counts.reduceByKey(_+_).saveAsTextFile("C:\\Users\\rv00451128\\Desktop\\tutorial\\data\\wordcount")
+
+RangePartitioner:
+------------------------
+If there are sortable records, then range partition will divide the records almost in equal ranges. 
+The ranges are determined by sampling the content of the RDD passed in.
+
+First, the RangePartitioner will sort the records based on the key and then it will divide the records into a number of partitions 
+based on the given value.
+
+Example:
+ val counts_range = textfile.flatMap(line => line.split(" ")).map(word => (word, 1))
+ val range=counts_range.partitionBy(new RangePartitioner(10,counts_range))
+ counts_range.reduceByKey(_+_).saveAsTextFile("C:\\Users\\rv00451128\\Desktop\\tutorial\\data\\range_ex")  
