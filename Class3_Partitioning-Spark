@@ -79,7 +79,8 @@ Custom Partitioners
 To implement a custom partitioner, we need to extend the Partitioner class and implement the three methods which are:
 numPartitions : Int : returns the number of partitions 
 getPartitions(key : Any) : Int :  returns the partition ID (0 to numPartitions-1) for the given key
-equals() : This is the standard Java equality method. Spark will need to test our partitioner object against other instances of itself when it decides whether two of our RDDs are partitioned the same way!!
+equals() : This is the standard Java equality method. Spark will need to test our partitioner object against other instances of itself 
+when it decides whether two of our RDDs are partitioned the same way!!
 Below is the simple custom partitioner example:
 
 
@@ -88,3 +89,12 @@ Example:
  val range=counts_range.partitionBy(new RangePartitioner(10,counts_range))
  counts_range.reduceByKey(_+_).saveAsTextFile("C:\\Users\\rv00451128\\Desktop\\tutorial\\data\\range_ex")  
 
+Custom partitioner mainly needs these things
+
+numPartitions: Int, it takes the number of partitions that needs to be created.
+
+gerPartition(key: Any): Int, this method will return the particular key to the specified partition ID which ranges from 0 to 
+numPartitions-1 for a given key.
+
+Equals(): is the normal java equality method used to compare two objects, this method will test your partitioner object against 
+other objects of itself then it decides whether two of your RDDs are Partitioned in the same way or not.
