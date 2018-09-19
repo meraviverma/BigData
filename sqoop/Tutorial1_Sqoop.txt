@@ -1,0 +1,231 @@
+Sqoop Import Command
+--------------------------------------------------------------
+sqoop import
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+
+In sqoop there is no reducer. There is only mapper. It will sqoop all the records from table.
+By default it is 4 mapper.Each mapper will copy subset of data.
+It get total count of no of record.It get min of id and max(id) and then divide it by 4.No of splits is 4.
+
+------------------------------------------------------------------------
+CASE1: What if you want to change path where sqoop should import
+------------------------------------------------------------------------
+We need to use --target-dir
+sqoop import
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--target-dir /etl/input/cities
+
+NOTE: Make sure that directory in which you are importing is new directory.Otherwise it will throw error.
+
+Internally it creates a jar file and then run it in hadoop
+
+-------------------------------------------------------------------------------------------------------
+CASE2:Suppose you don't want to specify target-dir every time so we can use data warehouse directory.
+It will import into that directory with the table name as directory name.
+-------------------------------------------------------------------------------------------------------
+--warehouse-dir
+
+sqoop import
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--warehouse-dir /etl/input/
+
+By default, Sqoop will create a directory with the same name as the imported table inside
+your home directory on HDFS and import all data there.
+
+-------------------------------------------------------------------------------------------------------
+CASE3: Suppose you want to import only subset of data.
+-------------------------------------------------------------------------------------------------------
+"--where"
+
+sqoop import
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--where "country = 'IND'"
+
+Advanced functions could lock certain tables, preventing Sqoop from transferring data in parallel. This will
+adversely affect transfer performance. For efficient advanced filtering, run the filtering query on your database prior to import, save its output to a temporary table and run Sqoop to import the temporary table into Hadoop
+
+-------------------------------------------------------------------------------------------------------
+CASE4: Protect password
+-------------------------------------------------------------------------------------------------------
+1)You can specify password prompt [-P]
+2)you can save password in a password file.[--password-file]
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--table cities \
+-P
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--table cities \
+--password-file my-sqoop-password
+
+set the file’s permissions to 400,so no one else can open the file and fetch the password.
+echo "my-secret-password" > sqoop.password
+hadoop dfs -put sqoop.password /user/$USER/sqoop.password
+hadoop dfs -chown 400 /user/$USER/sqoop.password
+
+rm sqoop.password
+sqoop import --password-file /user/$USER/sqoop.password
+
+When using a text editor to manually
+edit the password file, be sure not to introduce extra empty lines at the end of the file.
+-------------------------------------------------------------------------------------------------------
+CASE5:Using File format other than CSV
+-------------------------------------------------------------------------------------------------------
+Default is csv file format.
+--as-sequencefile
+--as-avrodatafile
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--as-sequencefile
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--as-avrodatafile
+
+generic data serialization. It use binary behind the scene. Json string all schema is encode in avro
+
+Binary Format advantage:
+---------------------------
+Binary formats have a few benefits over that of text files. First, binary formats are a natural fit for storing binary values like images or PDF documents. They are also more suited for storing text data if the data itself contains characters that are otherwise used as separators in the text file.
+Binary Format Disadvantage:
+----------------------------
+In order to access the binary data, you need to implement extra functionality or load special libraries in your application.
+
+Sequence File Format
+------------------------------
+1)The SequenceFile is a special Hadoop file format that is used for storing objects and implements the Writable interface. This format was customized for MapReduce, and thus it expects that each record will consist of two parts: key and value. 
+2)Sqoop does not have the concept of key-value pairs and thus uses an empty object called NullWritable
+in place of the value. For the key, Sqoop uses the generated class.
+3)For convenience, this generated class is copied to the directory where Sqoop is executed. You will need to
+integrate this generated class to your application if you need to read a Sqoop-generated SequenceFile.
+
+Avro File Format
+------------------------------
+1)Avro is a very generic system that can store any arbitrary data structures. It uses a concept called
+schema to describe what data structures are stored within the file.
+2)The schema is usually encoded as a JSON string so that it’s decipherable by the human eye. Sqoop will generate
+the schema automatically based on the metadata information retrieved from the database server and will retain the schema in each generated file.
+
+-------------------------------------------------------------------------------------------------------
+CASE6: Compressing Imported Data	--compress --compression-codec
+-------------------------------------------------------------------------------------------------------
+You want to decrease the overall size occupied on HDFS by using compression for generated files.
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--table cities \
+--compress
+
+By Default compression is GZip codec. And all files will end up with a .gz extension.
+
+We can choose any other codec using --compression-codec parameter.
+We can use BZip2 insstead of GZip (file will end as .bz2)
+
+--compression-codec org.apache.hadoop.io.compress.BZip2Codec
+
+NOTE: Before using any compression codec make sure that desired codec is properly installed and configured 
+across all nodes in cluster.
+
+if in the mapred-site.xml file, the property mapred.output.compress is set to false with the final flag, then
+Sqoop won’t be able to compress the output files even when you call it with the --compress parameter.
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--table cities \
+--compress
+--compression-codec org.apache.hadoop.io.compress.SnappyCodec
+
+-------------------------------------------------------------------------------------------------------
+Q)What is Direct mode in sqoop?	--direct
+-------------------------------------------------------------------------------------------------------
+For some databases you can take advantage of the direct mode by using the --direct
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--table cities \
+--direct
+
+Rather than using the JDBC interface for transferring data, the direct mode delegates the job of transferring data to the native utilities provided by the database vendor.
+
+In the case of MySQL, the mysqldump and mysqlimport will be used for retrieving data from the database server or moving data back.
+In the case of PostgreSQL, Sqoop will take advantage of the pg_dump utility to import data.
+
+Using native utilities will greatly improve performance, as they are optimized to provide the best possible transfer speed while putting less burden on the database server.
+
+Disadvantage:
+-----------------
+Because all data transfer operations are performed inside generated MapReduce jobs and because the data transfer is being deferred to native utilities in direct mode, you will need to make sure that those native utilities are available on all of your Hadoop TaskTracker nodes. For example, in the case of MySQL, each node hosting a TaskTracker service needs to have both mysqldump and mysqlimport utilities installed.
+
+As the native utilities usually produce text output, binary formats like SequenceFile or Avro won’t work.
+
+------------------------------------------------------
+CASE7:CONTTROLLING PARALLELISM
+------------------------------------------------------
+--num-mappers
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--num-mappers 10
+
+If your data set is very small, Sqoop might resort to using a smaller number of mappers. For example, if you’re transferring only 4 rows yet set --num-mappers to 10 mappers, only 4 mappers will be used.
+
+Increasing the number of mappers beyond this point won’t lead to faster job completion; in fact, it will have the opposite effect as your database server spends more time doing context switching rather than serving data.
+------------------------------------------------------
+case8: Encoding NULL Values
+------------------------------------------------------
+Sqoop encodes database NULL values using the null string constant.
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--null-string '\\N' \
+--null-non-string '\\N'
+
+For text-based columns that are defined with type VARCHAR, CHAR, NCHAR, TEXT, and a few others, you can override the default substitution string using the parameter --null-string.
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+
+
+
