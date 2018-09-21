@@ -219,20 +219,201 @@ sqoop import \
 --null-non-string '\\N'
 
 For text-based columns that are defined with type VARCHAR, CHAR, NCHAR, TEXT, and a few others, you can override the default substitution string using the parameter --null-string.
+
 ------------------------------------------------------
+CASE9:Importing All Your Tables
 ------------------------------------------------------
+sqoop import-all-tables \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop
+
+you can use the parameter --excludetables that accepts a comma-separated list of table names that should be excluded from the bulk import.
+
+sqoop import-all-tables \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--exclude-tables cities,countries
+
+For example, you can’t use the parameter --target-dir, as that would instruct Sqoop to import all tables into the same directory, resulting in a total file mess on HDFS.
+
+Using the --warehouse-dir parameter is fine, as this parameter can be easily used for all imported tables.
+
 ------------------------------------------------------
+CASE10: INCREMENTAL IMPORT --incremental --check-column --last-value
 ------------------------------------------------------
+--incremental parameter
+
+Two types of incremental import:
+1)append
+2)last modified
+
+
+The parameter value will be type of incremental import.
+
+Incremental import also requires two additional parameters: --check-column indicates
+a column name that should be checked for newly appended data, and --last-value
+contains the last value that successfully imported into Hadoop.
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table visits \
+--incremental append \
+--check-column id \
+--last-value 1
+
+In sqoop we have an option of sqoop job --create, so next time when you use append mode you 
+don't need to specify the last-value.Sqoop will store that value in metastore
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table visits \
+--incremental lastmodified \
+--check-column last_update_date \
+--last-value "2013-05-22 01:01:01"
+
+The incremental mode lastmodified requires a column holding a date value (suitable
+types are date, time, datetime, and timestamp) containing information as to when each
+row was last updated.
+
 ------------------------------------------------------
+CASE11: Preserving last imported value
 ------------------------------------------------------
+We need to remember last imported value in sqoop for incremental import.
+
+We can take advantage of sqoop built in metastore that allows you to save all parameter for later use.
+
+sqoop job \
+--create visits \
+
+-- \
+import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table visits \
+--incremental append \
+--check-column id \
+--last-value 0
+
+Sqoop that allows you to retain your job
+definitions and to easily run them anytime. Each saved job has a logical name that is
+used for referencing. You can list all retained jobs using the --list parameter:
+
+sqoop job --list
+
+You can remove the old job definitions that are no longer needed with the --delete
+parameter, for example:
+
+sqoop job --delete visits
+
+And finally, you can also view content of the saved job definitions using the --show
+parameter, for example:
+
+sqoop job --show visits
+
 ------------------------------------------------------
+CASE12: FREE FORM QUERY
 ------------------------------------------------------
+cases where you need to import data from more than one table or where you
+need to customize the transferred data by calling various database functions.
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--query 'SELECT normcities.id, \
+countries.country, \
+normcities.city \
+FROM normcities \
+JOIN countries USING(country_id) \
+WHERE $CONDITIONS' \
+--split-by id \
+--target-dir cities
+
+In addition to the --query parameter, you need
+to specify the --split-by parameter with the column that should be used for slicing
+your data into multiple parallel tasks. This parameter usually automatically defaults to
+the primary key of the main table. The third required parameter is --target-dir, which
+specifies the directory on HDFS where your data should be stored.
+
+NOTE:"The free-form query import can’t be used in conjunction with the \--warehouse-dir parameter."
+
+$CONDITIONS is replaced with condition of mapper.Sqoop
+will automatically substitute this placeholder with the generated conditions specifying
+which slice of data should be transferred by each individual task.
+
+While you could skip $CONDITIONS by forcing Sqoop to run only one job using the --num-mappers 1 parameter.
+
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--query 'SELECT normcities.id, \
+countries.country, \
+normcities.city \
+FROM normcities \
+JOIN countries USING(country_id) \
+WHERE  id <=20
+AND $CONDITIONS' \
+--split-by id \
+--target-dir cities
+
 ------------------------------------------------------
+CASE13: BOUNDRY QUERY
 ------------------------------------------------------
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--query 'SELECT normcities.id, \
+countries.country, \
+normcities.city \
+FROM normcities \
+JOIN countries USING(country_id) \
+WHERE $CONDITIONS' \
+--split-by id \
+--target-dir cities \
+--boundary-query "select min(id), max(id) from normcities"
+
 ------------------------------------------------------
+Q) How will you sqoop if you don't have any primary key?
 ------------------------------------------------------
+Ans: We can use no. of mapper=1 or we can use split-by
+
+sqoop import \
+    --connect jdbc:mysql://localhost/test_db \
+    --username root \
+    --password **** \
+    --table <RDBMS-Table-name> \
+    --target-dir /user/root/user_data \
+    --hive-import \ 
+    --hive-table <hive-table-name> \
+    --create-hive-table \
+    -m 1 (or) --split-by <RDBMS-Column>
 ------------------------------------------------------
+Q)Sqoop import to Hive table
 ------------------------------------------------------
+sqoop import 
+--connect jdbc:mysql://localhost/test
+--table x1
+-m 1
+--hive-import
+
+Sometimes the default mapping doesn’t work correctly for your needs; in those cases,
+you can use the parameter 
+--map-column-hive to override it.
+
+sqoop import \
+...
+--hive-import \
+--map-column-hive id=STRING,price=DECIMAL
+
 
 
 
