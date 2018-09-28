@@ -2,7 +2,7 @@ Read Cassandra
 ------------------------
 Read from a cassandra table:
 
-val tableToLoad=sqlContext
+val tableToLoad=SQLContext
         .read
         .format("org.apache.spark.sql.cassandra")
         .options(Map("table"->"words_new","Keyspace"->"test_keyspace","inferSchema"->"true","cluster"-> "Test Cluster"))
