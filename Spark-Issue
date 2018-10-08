@@ -46,3 +46,46 @@ and set property in your code.
     And you are ready to go
     
     
+Issue4:
+------------------------------------
+ava.lang.ClassCastException: com.datastax.driver.core.DefaultResultSetFuture cannot be cast 
+to shade.com.datastax.spark.connector.google.common.util.concurrent.ListenableFuture
+
+Remove below dependency:
+<dependency>
+      <groupId>com.datastax.cassandra</groupId>
+      <artifactId>cassandra-driver-core</artifactId>
+      <version>3.5.1</version>
+    </dependency>-->
+    
+ Use Only below dependency:
+ ------------------------------
+ <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_${scala.tools.version}</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-sql_${scala.tools.version}</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+    
+     <dependency>
+      <groupId>com.datastax.spark</groupId>
+      <artifactId>spark-cassandra-connector_${scala.tools.version}</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+
+  </dependencies>
