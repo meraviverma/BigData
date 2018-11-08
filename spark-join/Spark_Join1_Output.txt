@@ -1,0 +1,173 @@
++---+----------------+----------------+---------------+
+| id|            name|graduate_program|   spark_status|
++---+----------------+----------------+---------------+
+|  0|   Bill Chambers|               0|          [100]|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|
+|  2|Michael Armbrust|               1|     [250, 100]|
++---+----------------+----------------+---------------+
+
++---+-------+--------------------+-----------+
+| id| degree|          department|     school|
++---+-------+--------------------+-----------+
+|  0|Masters|School of Informa...|UC Berkeley|
+|  2|Masters|                EECS|UC Berkeley|
+|  1|  Ph.D.|                EECS|UC Berkeley|
++---+-------+--------------------+-----------+
+
++---+--------------+
+| id|        status|
++---+--------------+
+|500|Vice President|
+|250|    PMC Member|
+|100|   Contributor|
++---+--------------+
+
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+| id|            name|graduate_program|   spark_status| id| degree|          department|     school|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|  0|   Bill Chambers|               0|          [100]|  0|Masters|School of Informa...|UC Berkeley|
+|  2|Michael Armbrust|               1|     [250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+| id|            name|graduate_program|   spark_status| id| degree|          department|     school|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|  0|   Bill Chambers|               0|          [100]|  0|Masters|School of Informa...|UC Berkeley|
+|  2|Michael Armbrust|               1|     [250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+
++----+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|  id|            name|graduate_program|   spark_status| id| degree|          department|     school|
++----+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|   1|   Matei Zaharia|               1|[500, 250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
+|   2|Michael Armbrust|               1|     [250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
+|null|            null|            null|           null|  2|Masters|                EECS|UC Berkeley|
+|   0|   Bill Chambers|               0|          [100]|  0|Masters|School of Informa...|UC Berkeley|
++----+----------------+----------------+---------------+---+-------+--------------------+-----------+
+
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+| id|            name|graduate_program|   spark_status| id| degree|          department|     school|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|  0|   Bill Chambers|               0|          [100]|  0|Masters|School of Informa...|UC Berkeley|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
+|  2|Michael Armbrust|               1|     [250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+
++---+-------+--------------------+-----------+----+----------------+----------------+---------------+
+| id| degree|          department|     school|  id|            name|graduate_program|   spark_status|
++---+-------+--------------------+-----------+----+----------------+----------------+---------------+
+|  0|Masters|School of Informa...|UC Berkeley|   0|   Bill Chambers|               0|          [100]|
+|  2|Masters|                EECS|UC Berkeley|null|            null|            null|           null|
+|  1|  Ph.D.|                EECS|UC Berkeley|   2|Michael Armbrust|               1|     [250, 100]|
+|  1|  Ph.D.|                EECS|UC Berkeley|   1|   Matei Zaharia|               1|[500, 250, 100]|
++---+-------+--------------------+-----------+----+----------------+----------------+---------------+
+
++----+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|  id|            name|graduate_program|   spark_status| id| degree|          department|     school|
++----+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|   0|   Bill Chambers|               0|          [100]|  0|Masters|School of Informa...|UC Berkeley|
+|null|            null|            null|           null|  2|Masters|                EECS|UC Berkeley|
+|   2|Michael Armbrust|               1|     [250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
+|   1|   Matei Zaharia|               1|[500, 250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
++----+----------------+----------------+---------------+---+-------+--------------------+-----------+
+
++---+----------------+----------------+---------------+
+| id|            name|graduate_program|   spark_status|
++---+----------------+----------------+---------------+
+|  0|   Bill Chambers|               0|          [100]|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|
+|  2|Michael Armbrust|               1|     [250, 100]|
++---+----------------+----------------+---------------+
+
++---+-------+--------------------+-----------+
+| id| degree|          department|     school|
++---+-------+--------------------+-----------+
+|  0|Masters|School of Informa...|UC Berkeley|
+|  1|  Ph.D.|                EECS|UC Berkeley|
++---+-------+--------------------+-----------+
+
++---+----+----------------+------------+
+| id|name|graduate_program|spark_status|
++---+----+----------------+------------+
++---+----+----------------+------------+
+
++---+-------+----------+-----------+
+| id| degree|department|     school|
++---+-------+----------+-----------+
+|  2|Masters|      EECS|UC Berkeley|
++---+-------+----------+-----------+
+
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+| id|            name|graduate_program|   spark_status| id| degree|          department|     school|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+|  0|   Bill Chambers|               0|          [100]|  0|Masters|School of Informa...|UC Berkeley|
+|  2|Michael Armbrust|               1|     [250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|  1|  Ph.D.|                EECS|UC Berkeley|
++---+----------------+----------------+---------------+---+-------+--------------------+-----------+
+
++---+-------+--------------------+-----------+---+----------------+----------------+---------------+
+| id| degree|          department|     school| id|            name|graduate_program|   spark_status|
++---+-------+--------------------+-----------+---+----------------+----------------+---------------+
+|  0|Masters|School of Informa...|UC Berkeley|  0|   Bill Chambers|               0|          [100]|
+|  1|  Ph.D.|                EECS|UC Berkeley|  2|Michael Armbrust|               1|     [250, 100]|
+|  1|  Ph.D.|                EECS|UC Berkeley|  1|   Matei Zaharia|               1|[500, 250, 100]|
++---+-------+--------------------+-----------+---+----------------+----------------+---------------+
+
++--------+----------------+----------------+---------------+---+--------------+
+|personId|            name|graduate_program|   spark_status| id|        status|
++--------+----------------+----------------+---------------+---+--------------+
+|       0|   Bill Chambers|               0|          [100]|100|   Contributor|
+|       1|   Matei Zaharia|               1|[500, 250, 100]|500|Vice President|
+|       1|   Matei Zaharia|               1|[500, 250, 100]|250|    PMC Member|
+|       1|   Matei Zaharia|               1|[500, 250, 100]|100|   Contributor|
+|       2|Michael Armbrust|               1|     [250, 100]|250|    PMC Member|
+|       2|Michael Armbrust|               1|     [250, 100]|100|   Contributor|
++--------+----------------+----------------+---------------+---+--------------+
+
++---+----------------+----------------+---------------+----------------+-------+--------------------+-----------+
+| id|            name|graduate_program|   spark_status|graduate_program| degree|          department|     school|
++---+----------------+----------------+---------------+----------------+-------+--------------------+-----------+
+|  0|   Bill Chambers|               0|          [100]|               0|Masters|School of Informa...|UC Berkeley|
+|  2|Michael Armbrust|               1|     [250, 100]|               1|  Ph.D.|                EECS|UC Berkeley|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|               1|  Ph.D.|                EECS|UC Berkeley|
++---+----------------+----------------+---------------+----------------+-------+--------------------+-----------+
+
++----------------+
+|graduate_program|
++----------------+
+|               0|
+|               1|
+|               1|
++----------------+
+
++----------------+
+|graduate_program|
++----------------+
+|               0|
+|               1|
+|               1|
++----------------+
+
++---+----------------+---------------+----------------+-------+--------------------+-----------+
+| id|            name|   spark_status|graduate_program| degree|          department|     school|
++---+----------------+---------------+----------------+-------+--------------------+-----------+
+|  0|   Bill Chambers|          [100]|               0|Masters|School of Informa...|UC Berkeley|
+|  2|Michael Armbrust|     [250, 100]|               1|  Ph.D.|                EECS|UC Berkeley|
+|  1|   Matei Zaharia|[500, 250, 100]|               1|  Ph.D.|                EECS|UC Berkeley|
++---+----------------+---------------+----------------+-------+--------------------+-----------+
+
++---+----------------+----------------+---------------+-------+-------+--------------------+-----------+
+| id|            name|graduate_program|   spark_status|grad_id| degree|          department|     school|
++---+----------------+----------------+---------------+-------+-------+--------------------+-----------+
+|  0|   Bill Chambers|               0|          [100]|      0|Masters|School of Informa...|UC Berkeley|
+|  2|Michael Armbrust|               1|     [250, 100]|      1|  Ph.D.|                EECS|UC Berkeley|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|      1|  Ph.D.|                EECS|UC Berkeley|
++---+----------------+----------------+---------------+-------+-------+--------------------+-----------+
+
+== Physical Plan ==
+*(1) BroadcastHashJoin [id#26], [graduate_program#11], Cross, BuildRight
+:- LocalTableScan [id#26, degree#27, department#28, school#29]
++- BroadcastExchange HashedRelationBroadcastMode(List(cast(input[2, int, false] as bigint)))
+   +- LocalTableScan [id#9, name#10, graduate_program#11, spark_status#12]

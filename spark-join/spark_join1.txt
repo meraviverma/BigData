@@ -1,0 +1,164 @@
+person
++---+----------------+----------------+---------------+
+| id|            name|graduate_program|   spark_status|
++---+----------------+----------------+---------------+
+|  0|   Bill Chambers|               0|          [100]|
+|  1|   Matei Zaharia|               1|[500, 250, 100]|
+|  2|Michael Armbrust|               1|     [250, 100]|
++---+----------------+----------------+---------------+
+
+graduateProgram
++---+-------+--------------------+-----------+
+| id| degree|          department|     school|
++---+-------+--------------------+-----------+
+|  0|Masters|School of Informa...|UC Berkeley|
+|  2|Masters|                EECS|UC Berkeley|
+|  1|  Ph.D.|                EECS|UC Berkeley|
++---+-------+--------------------+-----------+
+
+sparkStatus
++---+--------------+
+| id|        status|
++---+--------------+
+|500|Vice President|
+|250|    PMC Member|
+|100|   Contributor|
++---+--------------+
+
+
+
+inner joins (keep rows with keys that exist in the left and right datasets),
+outer joins (keep rows with keys in either the left or right datasets),
+left outer joins (keep rows with keys in the left dataset),
+right outer joins (keep rows with keys in the right dataset),
+left semi joins (keep the rows in the left (and only the left) dataset where
+the key appears in the right dataset),
+left anti joins (keep the rows in the left (and only the left) dataset where
+they does not appear in the right dataset)
+cross (or cartesian) joins (match every row in the left dataset with every
+row in the right dataset).
+
+inner joins: inner
+outer joins: outer
+left outer joins: left_outer
+right outer joins: right_outer
+left semi joins: left_semi
+left anti joins: left_anti
+cross joins: cross
+
+Inner join are by default
+
+Inner Join:
+-------------------------
+Inner joins will look at the keys in both of the DataFrames or tables and only
+include (and join together) the rows that evaluate to true.
+
+Outer Join:
+----------------------------
+Outer joins will look at the keys in both of the DataFrames or tables and will
+include (and join together) the rows that evaluate to true or false. “Null”
+values will be filled in where there is not a equivalent row in the left or right
+DataFrames.
+
+Left outer join:
+----------------------------
+Left outer joins will look at the keys in both of the DataFrames or tables and
+will include all rows from the left DataFrame as well as any rows in the right
+DataFrame that have a match in the left DataFrame. “Null” values will be
+filled in where there is not a equivalent row in the right DataFrame.
+
+
+Right Outer Join:
+------------------------------
+Right outer joins will look at the keys in both of the DataFrames or tables and
+will include all rows from the right DataFrame as well as any rows in the left
+DataFrame that have a match in the right DataFrame. “Null” values will be
+filled in where there is not a equivalent row in the left DataFrame.
+
+Left Semi Join:
+--------------------------
+They do not actually
+include any values from the right DataFrame, they only compare values to see
+if the value exists in the second DataFrame. If they do those rows will be kept
+in the result even if there are duplicate keys in the left DataFrame. Left semi
+joins can be thought of as filters on a DataFrame and less of a conventional
+join.
+
+Left Anti Join:
+--------------------------
+Left anti joins are the opposite of left semi joins. Like left semi joins, they do
+not actually include any values from the right DataFrame, they only compare
+values to see if the value exists in the second DataFrame. However rather than
+keeping the values that exist in the second DataFrame, they only keep the
+values that do not have a corresponding key in the second DataFrame.
+
+Cross(Cartesian ) Join
+---------------------------
+Cross joins in
+simplest terms are inner joins that do not specify a predicate. Cross joins will
+join every single row in the left DataFrame to ever single row in the right
+DataFrame.
+
+Join on complex data types:
+-----------------------------------
+person.withColumnRenamed("id","personId")
+      .join(sparkStatus,expr("array_contains(spark_status,id)"))
+      .show()
+
+val gradProgramDupe = graduateProgram.withColumnRenamed("id", "graduate_program")
+val joinExpr = gradProgramDupe.col("graduate_program") === person.col("graduate_program")
+person.join(gradProgramDupe, joinExpr).show()	  
+
+Handling Duplicate Column Names:
+--------------------------------------
+Approach 1: Change join expression from a boolean to the string or sequence.
+
+person
+.join(gradProgramDupe, "graduate_program")
+.select("graduate_program")
+.show()
+
+Approach2: Dropping a column after the join.
+ person
+      .join(gradProgramDupe,joinExpr)
+      .drop(person.col("graduate_program"))
+      .select("graduate_program")
+      .show()
+
+    person
+      .join(gradProgramDupe,joinExpr)
+      .drop(person.col("graduate_program"))
+      .show()
+	  
+
+Approach3: Rename the column before the join.
+val gradProgram3 = graduateProgram
+.withColumnRenamed("id", "grad_id")
+val joinExpr = person.col("graduate_program") === gradProgram3.col("grad_id")
+person
+.join(gradProgram3, joinExpr)
+.show()
+
+Spark will either incur a  shuffle join or broadcast join.
+
+shuffle join: It result in all to all communication.
+
+broadcast join: Where one of the Dataframe you work with is duplicate around the cluster which in general 
+result in lower total communication that a shuffle join.
+
+Big table to big table is shuffle join.
+
+
+
+
+
+205
+
+mapping
+generating
+aggregating
+
+lit
+explode
+otherwise
+
