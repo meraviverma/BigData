@@ -89,3 +89,12 @@ Remove below dependency:
     </dependency>
 
   </dependencies>
+  
+  Issue 4
+  ----------------
+  Exception in thread "main" java.lang.NoSuchMethodError: scala.Predef$.refArrayOps
+  ([Ljava/lang/Object;)Lscala/collection/mutable/ArrayOps;
+  Use scala 2.11
+  I had SDK in global libraries with a different version of Scala(IntelliJ IDEA).
+File -> Project Structure -> Global libraries -> Remove SDK -> Rebuild. It fixed the Exception for me.
+
