@@ -98,3 +98,16 @@ Remove below dependency:
   I had SDK in global libraries with a different version of Scala(IntelliJ IDEA).
 File -> Project Structure -> Global libraries -> Remove SDK -> Rebuild. It fixed the Exception for me.
 
+
+Issue 5
+------------------
+reading json gives error. When printing schema it gives error like:
+root
+ |-- _corrupt_record: string (nullable = true)
+
+()
+ Don't follow this way to import:
+ val student =sc.read.json("D:\\mypro\\spark\\student_detai.json")
+ 
+ Follow:
+ val student =sc.read.option("multiline","true").json("D:\\mypro\\spark\\student_detai.json")
