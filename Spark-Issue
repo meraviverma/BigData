@@ -111,3 +111,19 @@ root
  
  Follow:
  val student =sc.read.option("multiline","true").json("D:\\mypro\\spark\\student_detai.json")
+ 
+ Issue 6
+ ------------------
+ Running hadoop mapreduce code in windows
+ 
+ Exception in thread “main” java.lang.UnsatisfiedLinkError: org.apache.hadoop.io.nativeio.NativeIO$Windows.access0(Ljava/lang/String;I)Z
+ 
+ https://github.com/steveloughran/winutils/tree/master/hadoop-2.7.1/bin
+ 
+ After putting haddop.dll and winutils in hadoop/bin folder and adding the folder of hadoop to PATH, 
+ we also need to put hadoop.dll into the C:\Windows\System32 folder
+ 
+ https://stackoverflow.com/questions/41851066/exception-in-thread-main-java-lang-unsatisfiedlinkerror-org-apache-hadoop-io
+ 
+
+
