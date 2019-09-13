@@ -398,7 +398,7 @@ sqoop import \
     --create-hive-table \
     -m 1 (or) --split-by <RDBMS-Column>
 ------------------------------------------------------
-Q)Sqoop import to Hive table
+Q)Sqoop import to Hive table. Sqoop to import your data directly into Hive.
 ------------------------------------------------------
 sqoop import 
 --connect jdbc:mysql://localhost/test
@@ -415,6 +415,25 @@ sqoop import \
 --hive-import \
 --map-column-hive id=STRING,price=DECIMAL
 
+--hive-overwrite
 
+1) The biggest advantage of using Sqoop for populating tables in Hive is that it can automatically populate the metadata for you. 
+If the table in Hive does not exist yet, Sqoop will simply create it based on the metadata fetched for your table or query. 
+If the table already exists, Sqoop will import data into the existing table.
+
+2)If you’re creating a new Hive table, Sqoop will convert the data types of each column from your source table to a type compatible 
+with Hive. Usually this conversion is straightforward: for example,JDBC types VARCHAR, CHAR, and other string-based types are all 
+mapped to Hive STRING.
+
+3) Sometimes the default mapping doesn’t work correctly for your needs; in those cases,you can use the parameter --map-column-hive 
+to override it.
+
+4) During a Hive import, Sqoop will first do a normal HDFS import to a temporary location. After a successful import, Sqoop 
+generates two queries: one for creating a table and another one for loading the data from a temporary location. You can specify 
+any temporary location using either the --target-dir or --warehouse-dir parameter. It’s important not to use Hive’s warehouse 
+directory (usually /user/hive/warehouse) for the temporary location, as it may cause issues with loading data in the second step.
+
+5)If your table already exists and contains data, Sqoop will append to the newly imported data. You can change this behavior by using the parameter --hive-overwrite, which will instruct Sqoop to truncate an existing Hive table and load only the newly imported
+one.
 
 
