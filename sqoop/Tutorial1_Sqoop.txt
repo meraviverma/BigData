@@ -54,7 +54,8 @@ sqoop import
 --where "country = 'IND'"
 
 Advanced functions could lock certain tables, preventing Sqoop from transferring data in parallel. This will
-adversely affect transfer performance. For efficient advanced filtering, run the filtering query on your database prior to import, 
+adversely affect transfer performance. For efficient advanced filtering, run the filtering query on your database prior to 
+import, 
 save its output to a temporary table and run Sqoop to import the temporary table into Hadoop
 
 -------------------------------------------------------------------------------------------------------
