@@ -1,10 +1,15 @@
 Sqoop Import Command
 --------------------------------------------------------------
+--table : Transfer table data to HDFS.The result of the command will be a csv file
 sqoop import
 --connect jdbc:mysql://mysql.example.com/sqoop \
 --username sqoop \
 --password sqoop \
 --table cities \
+
+Based on the retrieved metadata, Sqoop will generate a Java class and compile it using the JDK and Hadoop libraries available on 
+your machine.Next, Sqoop will connect to your Hadoop cluster and submit a MapReduce job. Each mapper of the job will then transfer 
+a slice of the table’s data.
 
 In sqoop there is no reducer. There is only mapper. It will sqoop all the records from table.
 By default it is 4 mapper.Each mapper will copy subset of data.
@@ -437,3 +442,25 @@ directory (usually /user/hive/warehouse) for the temporary location, as it may c
 one.
 
 
+-------------------------------------------------------------
+Q)You want to import data into Hive on a regular basis (for example, daily), and for that purpose your Hive table is partitioned. You would like Sqoop to automatically import data into the partition rather than only to the table.
+--------------------------------------------------------------------------
+
+--hive-partition-key : contains name of partition column
+--hive-partition-value : specifies the desired value
+
+For example, if your partition column is called day and you want to import your data into the value 2013-05-22, you would use the following
+command:
+sqoop import \
+--connect jdbc:mysql://mysql.example.com/sqoop \
+--username sqoop \
+--password sqoop \
+--table cities \
+--hive-import \
+--hive-partition-key day \
+--hive-partition-value "2013-05-22"
+
+Note: 
+1)Sqoop mandates that the partition column of type string.
+2)Sqoop cannot use your data to determine which partition this should go into.Instead sqoop relies on the user to specify the 
+parameter --hive-partition-value with appropriate value.
