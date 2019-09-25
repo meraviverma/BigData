@@ -1,3 +1,7 @@
 Git Hub Repo:
 -----------------
 https://github.com/glowsom?tab=repositories
+
+Spark Built In Functions:
+-------------------------------------
+https://spark.apache.org/docs/2.3.0/api/sql/index.html
