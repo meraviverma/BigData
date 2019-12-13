@@ -125,5 +125,25 @@ root
  
  https://stackoverflow.com/questions/41851066/exception-in-thread-main-java-lang-unsatisfiedlinkerror-org-apache-hadoop-io
  
+ Issue 7
+ ------------------------
+ Issue while writing to avro file format.
+ 
+ student.write.format("com.databricks.spark.avro").save("D:\\mypro\\spark\\avro-data")
+ 
+ java.lang.AbstractMethodError: org.apache.spark.sql.execution.datasources.OutputWriter.write
+ (Lorg/apache/spark/sql/catalyst/InternalRow;)V
+	at org.apache.spark.sql.execution.datasources.FileFormatWriter$SingleDirectoryWriteTask.execute(FileFormatWriter.scala:392)
+	at 
+  
+  Solution:
+  -------------
+  Use this dependency:
+  <dependency>
+            <groupId>com.databricks</groupId>
+            <artifactId>spark-avro_2.11</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+ 
 
 
