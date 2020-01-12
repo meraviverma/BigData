@@ -5,3 +5,7 @@ https://github.com/glowsom?tab=repositories
 Spark Built In Functions:
 -------------------------------------
 https://spark.apache.org/docs/2.3.0/api/sql/index.html
+
+Spark Internals:
+-----------------------
+https://freecontent.manning.com/what-happens-behind-the-scenes-with-spark/
